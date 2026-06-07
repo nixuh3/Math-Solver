@@ -1,0 +1,60 @@
+#include "solver.h"
+#include "error.h"
+#include <iostream>
+#include <fstream>
+
+void Solver::Run(int argc, const char** argv) {
+    if (argc > 2) {
+        std::cout << "Usage: math_solver [path]\n";
+    } else if (argc == 2) {
+        RunFile(argv[1]);
+    } else {
+        RunREPL();
+    }
+}
+
+void Solver::RunREPL() {
+    std::string line;
+
+    while (true) {
+        std::cout << "> ";
+        if (!std::getline(std::cin, line)) {
+            break;
+        }
+        if (line.empty()) {
+            continue;
+        }
+
+        Solve(line);
+        ErrorReporter::ClearError();
+    }
+}
+
+void Solver::RunFile(std::string_view path) {
+    std::ifstream file(std::string(path), std::ios::binary | std::ios::ate);
+    if (!file) {
+        std::cout << "Failed to open file: " << path << "\n";
+        return;
+    }
+
+    std::string buffer;
+    auto size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    buffer.resize(size);
+
+    file.read(buffer.data(), size);
+    file.close();
+
+    Solve(buffer);
+}
+
+void Solver::Solve(std::string_view source) {
+    const auto& tokens = m_scanner.Scan(source);
+    for (int i = 0; const auto& token : tokens) {
+        std::cout << ++i << ": " << token.ToStr() << "\n";
+    }
+
+    if (ErrorReporter::HadError()) {
+        return;
+    }
+}
