@@ -1,43 +1,38 @@
 #include "scanner.h"
 #include "error.h"
 
-const std::vector<Token>& Scanner::Scan(std::string_view source) {
-    m_source = source;
-    m_tokens.clear();
-    m_start = 0;
-    m_current = 0;
-    m_line = 1;
+Scanner::Scanner(std::string_view source) : m_source(source) {}
 
-    while (!IsAtEnd()) {
+const std::vector<Token>& Scanner::Scan() {
+    while (!isAtEnd()) {
         m_start = m_current;
-        ScanToken();
+        scanToken();
     }
 
     m_tokens.push_back({ END, "", {}, m_line });
     return m_tokens;
 }
 
-void Scanner::ScanToken() {
-    char c = Advance();
+void Scanner::scanToken() {
+    char c = advance();
 
     switch (c) {
-        case '(': AddToken(LEFT_PAREN); break;
-        case ')': AddToken(RIGHT_PAREN); break;
-        case '.': AddToken(DOT); break;
-        case '-': AddToken(MINUS); break;
-        case '+': AddToken(PLUS); break;
-        case '*': AddToken(STAR); break;
-        case '/': AddToken(SLASH); break;
-        case '=': AddToken(EQUAL); break;
+        case '(': addToken(LEFT_PAREN); break;
+        case ')': addToken(RIGHT_PAREN); break;
+        case '-': addToken(MINUS); break;
+        case '+': addToken(PLUS); break;
+        case '*': addToken(STAR); break;
+        case '/': addToken(SLASH); break;
+        case '=': addToken(EQUAL); break;
         case ' ':
         case '\r':
         case '\t': break;
         case '\n': m_line++; break;
         default:
-            if (IsDigit(c)) {
-                ScanNumber();
-            } else if (IsAlpha(c)) {
-                ScanIdentifier();
+            if (isDigit(c)) {
+                scanNumber();
+            } else if (isAlpha(c)) {
+                scanIdentifier();
             } else {
                 ErrorReporter::CompileError(
                     m_line, std::string("Unexpected character '") + c + "'");
@@ -46,51 +41,52 @@ void Scanner::ScanToken() {
     }
 }
 
-void Scanner::ScanNumber() {
-    while (IsDigit(Peek())) {
-        Advance();
+void Scanner::scanNumber() {
+    while (isDigit(peek())) {
+        advance();
     }
 
-    if (Peek() == '.' && IsDigit(Peek(1))) {
-        Advance();
+    if (peek() == '.' && isDigit(peek(1))) {
+        advance();
 
-        while (IsDigit(Peek())) {
-            Advance();
+        while (isDigit(peek())) {
+            advance();
         }
     }
 
     std::string s(m_source.begin() + m_start, m_source.begin() + m_current);
-    AddToken(NUMBER, std::stod(s));
+    addToken(NUMBER, std::stod(s));
 }
 
-void Scanner::ScanIdentifier() {
-    while (IsAlphaNumeric(Peek())) {
-        Advance();
+void Scanner::scanIdentifier() {
+    while (isAlphaNumeric(peek())) {
+        advance();
     }
 
     std::string text(m_source.begin() + m_start, m_source.begin() + m_current);
-    AddToken(IDENTIFIER);
+    addToken(IDENTIFIER);
 }
 
-void Scanner::AddToken(TokenType type) { AddToken(type, {}); }
+void Scanner::addToken(TokenType type) { addToken(type, {}); }
 
-void Scanner::AddToken(TokenType type, const Value& literal) {
+void Scanner::addToken(TokenType type, const Value& literal) {
     std::string_view text(&m_source[m_start], m_current - m_start);
     m_tokens.emplace_back(type, text, literal, m_line);
 }
 
-bool Scanner::IsAtEnd(int offset) const { return m_current + offset >= m_source.length(); }
-char Scanner::Peek(int offset) const {
-    if (IsAtEnd(offset)) {
+bool Scanner::isAtEnd(int offset) const { return m_current + offset >= m_source.length(); }
+
+char Scanner::peek(int offset) const {
+    if (isAtEnd(offset)) {
         return '\0';
     }
     return m_source[m_current + offset];
 }
 
-char Scanner::Advance() { return m_source[m_current++]; }
+char Scanner::advance() { return m_source[m_current++]; }
 
-bool Scanner::Match(char expected) {
-    if (IsAtEnd() || m_source[m_current] != expected) {
+bool Scanner::match(char expected) {
+    if (isAtEnd() || m_source[m_current] != expected) {
         return false;
     }
 
@@ -98,10 +94,10 @@ bool Scanner::Match(char expected) {
     return true;
 }
 
-bool Scanner::IsDigit(char c) { return c >= '0' && c <= '9'; }
+bool Scanner::isDigit(char c) { return c >= '0' && c <= '9'; }
 
-bool Scanner::IsAlpha(char c) {
+bool Scanner::isAlpha(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
-bool Scanner::IsAlphaNumeric(char c) { return IsAlpha(c) || IsDigit(c); }
+bool Scanner::isAlphaNumeric(char c) { return isAlpha(c) || isDigit(c); }

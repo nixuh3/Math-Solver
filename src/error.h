@@ -5,6 +5,7 @@
 class ErrorReporter {
   public:
     static void CompileError(int line, std::string_view msg);
+    static void CompileError(int line, std::string_view where, std::string_view msg);
     static bool HadError();
     static void ClearError();
 

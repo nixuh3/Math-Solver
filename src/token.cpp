@@ -33,7 +33,6 @@ std::string FormatDouble(double x, int precision = 6) {
 const std::unordered_map<TokenType, std::string_view> TypeToStr{
     {  LEFT_PAREN,  "left_paren" },
     { RIGHT_PAREN, "right_paren" },
-    {         DOT,         "dot" },
     {       MINUS,       "minus" },
     {        PLUS,        "plus" },
     {       SLASH,       "slash" },

@@ -8,9 +8,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(SOURCES
     src/main.cpp
     src/solver.cpp
-    src/token.cpp
     src/scanner.cpp
+    src/parser.cpp
+    src/token.cpp
     src/error.cpp
+    src/arena.cpp
 )
 
 add_executable(math_solver ${SOURCES})

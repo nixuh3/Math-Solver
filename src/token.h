@@ -6,7 +6,6 @@
 enum TokenType {
     LEFT_PAREN,
     RIGHT_PAREN,
-    DOT,
     MINUS,
     PLUS,
     SLASH,

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scanner.h"
+#include "arena.h"
 
 class Solver {
   public:
@@ -12,5 +12,5 @@ class Solver {
     void Solve(std::string_view source);
 
   private:
-    Scanner m_scanner;
+    Arena m_arena{ 2 * 1024 * 1024 };
 };

@@ -1,5 +1,7 @@
 #include "solver.h"
 #include "error.h"
+#include "scanner.h"
+#include "parser.h"
 #include <iostream>
 #include <fstream>
 
@@ -49,10 +51,15 @@ void Solver::RunFile(std::string_view path) {
 }
 
 void Solver::Solve(std::string_view source) {
-    const auto& tokens = m_scanner.Scan(source);
+    Scanner scanner(source);
+    auto& tokens = scanner.Scan();
+
     for (int i = 0; const auto& token : tokens) {
         std::cout << ++i << ": " << token.ToStr() << "\n";
     }
+
+    Parser parser(tokens, m_arena);
+    auto ast = parser.Parse();
 
     if (ErrorReporter::HadError()) {
         return;

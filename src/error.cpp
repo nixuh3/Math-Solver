@@ -6,6 +6,11 @@ void ErrorReporter::CompileError(int line, std::string_view msg) {
     s_hadError = true;
 }
 
+void ErrorReporter::CompileError(int line, std::string_view where, std::string_view msg) {
+    std::cerr << "[line " << line << "] Compile error" << where << ": " << msg << "\n";
+    s_hadError = true;
+}
+
 bool ErrorReporter::HadError() { return false; }
 
 void ErrorReporter::ClearError() { s_hadError = false; }

@@ -5,30 +5,31 @@
 
 class Scanner {
   public:
-    const std::vector<Token>& Scan(std::string_view source);
+    explicit Scanner(std::string_view source);
+    const std::vector<Token>& Scan();
 
   private:
-    void ScanToken();
-    void ScanNumber();
-    void ScanIdentifier();
+    void scanToken();
+    void scanNumber();
+    void scanIdentifier();
 
-    void AddToken(TokenType type);
-    void AddToken(TokenType type, const Value& literal);
+    void addToken(TokenType type);
+    void addToken(TokenType type, const Value& literal);
 
-    bool IsAtEnd(int offset = 0) const;
-    char Peek(int offset = 0) const;
-    char Advance();
-    bool Match(char expected);
+    bool isAtEnd(int offset = 0) const;
+    char peek(int offset = 0) const;
+    char advance();
+    bool match(char expected);
 
-    static bool IsDigit(char c);
-    static bool IsAlpha(char c);
-    static bool IsAlphaNumeric(char c);
+    static bool isDigit(char c);
+    static bool isAlpha(char c);
+    static bool isAlphaNumeric(char c);
 
   private:
     std::string_view m_source;
     std::vector<Token> m_tokens;
 
-    int m_start;
-    int m_current;
-    int m_line;
+    int m_start = 0;
+    int m_current = 0;
+    int m_line = 1;
 };
