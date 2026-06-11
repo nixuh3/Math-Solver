@@ -2,7 +2,7 @@
 
 #include "arena.h"
 
-class Solver {
+class MathSolver {
   public:
     void Run(int argc, const char** argv);
 

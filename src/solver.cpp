@@ -2,10 +2,12 @@
 #include "error.h"
 #include "scanner.h"
 #include "parser.h"
+#include "engine.h"
+#include "utils.h"
 #include <iostream>
 #include <fstream>
 
-void Solver::Run(int argc, const char** argv) {
+void MathSolver::Run(int argc, const char** argv) {
     if (argc > 2) {
         std::cout << "Usage: math_solver [path]\n";
     } else if (argc == 2) {
@@ -15,7 +17,7 @@ void Solver::Run(int argc, const char** argv) {
     }
 }
 
-void Solver::RunREPL() {
+void MathSolver::RunREPL() {
     std::string line;
 
     while (true) {
@@ -32,7 +34,7 @@ void Solver::RunREPL() {
     }
 }
 
-void Solver::RunFile(std::string_view path) {
+void MathSolver::RunFile(std::string_view path) {
     std::ifstream file(std::string(path), std::ios::binary | std::ios::ate);
     if (!file) {
         std::cout << "Failed to open file: " << path << "\n";
@@ -50,13 +52,9 @@ void Solver::RunFile(std::string_view path) {
     Solve(buffer);
 }
 
-void Solver::Solve(std::string_view source) {
+void MathSolver::Solve(std::string_view source) {
     Scanner scanner(source);
     auto& tokens = scanner.Scan();
-
-    for (int i = 0; const auto& token : tokens) {
-        std::cout << ++i << ": " << token.ToStr() << "\n";
-    }
 
     Parser parser(tokens, m_arena);
     auto ast = parser.Parse();
@@ -64,4 +62,7 @@ void Solver::Solve(std::string_view source) {
     if (ErrorReporter::HadError()) {
         return;
     }
+
+    Engine engine(ast);
+    std::cout << FormatDouble(engine.Evaluate()) << "\n";
 }

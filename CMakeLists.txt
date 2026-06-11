@@ -10,9 +10,11 @@ set(SOURCES
     src/solver.cpp
     src/scanner.cpp
     src/parser.cpp
+    src/engine.cpp
     src/token.cpp
     src/error.cpp
     src/arena.cpp
+    src/utils.cpp
 )
 
 add_executable(math_solver ${SOURCES})

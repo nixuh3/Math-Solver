@@ -12,9 +12,21 @@ const Expr* Parser::Parse() {
 }
 
 const Expr* Parser::expression() {
-    const Expr* expr = term();
+    const Expr* expr = power();
 
     while (match(EQUAL)) {
+        Token op = previous();
+        const Expr* right = power();
+        expr = m_arena.Alloc<Expr>(Binary{ expr, op, right });
+    }
+
+    return expr;
+}
+
+const Expr* Parser::power() {
+    const Expr* expr = term();
+
+    while (match(CARET)) {
         Token op = previous();
         const Expr* right = term();
         expr = m_arena.Alloc<Expr>(Binary{ expr, op, right });

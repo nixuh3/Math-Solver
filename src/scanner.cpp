@@ -19,10 +19,11 @@ void Scanner::scanToken() {
     switch (c) {
         case '(': addToken(LEFT_PAREN); break;
         case ')': addToken(RIGHT_PAREN); break;
-        case '-': addToken(MINUS); break;
         case '+': addToken(PLUS); break;
+        case '-': addToken(MINUS); break;
         case '*': addToken(STAR); break;
         case '/': addToken(SLASH); break;
+        case '^': addToken(CARET); break;
         case '=': addToken(EQUAL); break;
         case ' ':
         case '\r':
@@ -69,7 +70,7 @@ void Scanner::scanIdentifier() {
 
 void Scanner::addToken(TokenType type) { addToken(type, {}); }
 
-void Scanner::addToken(TokenType type, const Value& literal) {
+void Scanner::addToken(TokenType type, double literal) {
     std::string_view text(&m_source[m_start], m_current - m_start);
     m_tokens.emplace_back(type, text, literal, m_line);
 }

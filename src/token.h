@@ -1,32 +1,26 @@
 #pragma once
 
 #include <string>
-#include <variant>
 
 enum TokenType {
     LEFT_PAREN,
     RIGHT_PAREN,
-    MINUS,
     PLUS,
-    SLASH,
+    MINUS,
     STAR,
+    SLASH,
+    CARET, // ^
     EQUAL,
     IDENTIFIER,
     NUMBER,
     END
 };
 
-using Value = std::variant<std::monostate, double, std::string>;
-
-std::string ValToStr(const Value& value);
-
 struct Token {
-    Token(TokenType type, std::string_view lexeme, const Value& value, int line);
-
-    std::string ToStr() const;
+    Token(TokenType type, std::string_view lexeme, double value, int line);
 
     const TokenType type;
     const std::string lexeme;
-    const Value literal;
+    const double literal;
     const int line;
 };

@@ -21,7 +21,7 @@ struct Grouping {
 };
 
 struct Literal {
-    const Value value;
+    const double value;
 };
 
 struct Variable {
