@@ -14,7 +14,7 @@ class Arena {
     Arena& operator=(const Arena&) = delete;
 
     template <typename T, typename... Args>
-    T* Alloc(Args&&... args) {
+    const T* Alloc(Args&&... args) {
         size_t space = (m_buffer + m_size) - m_offset;
         void* ptr = static_cast<void*>(m_offset);
 

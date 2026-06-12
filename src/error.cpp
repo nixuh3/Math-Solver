@@ -1,5 +1,5 @@
+#include "pch.h"
 #include "error.h"
-#include <iostream>
 
 void ErrorReporter::CompileError(int line, std::string_view msg) {
     std::cerr << "[line " << line << "] Compile error: " << msg << "\n";

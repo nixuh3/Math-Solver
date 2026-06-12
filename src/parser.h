@@ -13,9 +13,9 @@ class Parser {
     struct ParseError {};
 
     const Expr* expression();
-    const Expr* power();
     const Expr* term();
     const Expr* factor();
+    const Expr* power();
     const Expr* unary();
     const Expr* primary();
 

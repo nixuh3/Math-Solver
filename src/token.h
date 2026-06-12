@@ -16,8 +16,23 @@ enum TokenType {
     END
 };
 
+constexpr std::string OperatorToStr(TokenType type) {
+    switch (type) {
+        case LEFT_PAREN: return "(";
+        case RIGHT_PAREN: return ")";
+        case PLUS: return "+";
+        case MINUS: return "-";
+        case STAR: return "*";
+        case SLASH: return "/";
+        case CARET: return "^";
+        case EQUAL: return "=";
+        default: return "";
+    }
+}
+
 struct Token {
-    Token(TokenType type, std::string_view lexeme, double value, int line);
+    Token(TokenType type, std::string_view lexeme, double value, int line)
+        : type(type), lexeme(lexeme), literal(value), line(line) {}
 
     const TokenType type;
     const std::string lexeme;

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "parser.h"
 #include "error.h"
 
@@ -12,21 +13,9 @@ const Expr* Parser::Parse() {
 }
 
 const Expr* Parser::expression() {
-    const Expr* expr = power();
-
-    while (match(EQUAL)) {
-        Token op = previous();
-        const Expr* right = power();
-        expr = m_arena.Alloc<Expr>(Binary{ expr, op, right });
-    }
-
-    return expr;
-}
-
-const Expr* Parser::power() {
     const Expr* expr = term();
 
-    while (match(CARET)) {
+    while (match(EQUAL)) {
         Token op = previous();
         const Expr* right = term();
         expr = m_arena.Alloc<Expr>(Binary{ expr, op, right });
@@ -48,11 +37,23 @@ const Expr* Parser::term() {
 }
 
 const Expr* Parser::factor() {
-    const Expr* expr = unary();
+    const Expr* expr = power();
 
     while (match(STAR, SLASH)) {
         Token op = previous();
-        const Expr* right = unary();
+        const Expr* right = power();
+        expr = m_arena.Alloc<Expr>(Binary{ expr, op, right });
+    }
+
+    return expr;
+}
+
+const Expr* Parser::power() {
+    const Expr* expr = unary();
+
+    while (match(CARET)) {
+        Token op = previous();
+        const Expr* right = power();
         expr = m_arena.Alloc<Expr>(Binary{ expr, op, right });
     }
 

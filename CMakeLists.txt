@@ -11,10 +11,12 @@ set(SOURCES
     src/scanner.cpp
     src/parser.cpp
     src/engine.cpp
-    src/token.cpp
     src/error.cpp
     src/arena.cpp
     src/utils.cpp
+    src/ast_printer.cpp
 )
 
 add_executable(math_solver ${SOURCES})
+
+target_precompile_headers(math_solver PRIVATE "src/pch.h")

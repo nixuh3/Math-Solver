@@ -1,11 +1,10 @@
+#include "pch.h"
 #include "solver.h"
 #include "error.h"
 #include "scanner.h"
 #include "parser.h"
 #include "engine.h"
 #include "utils.h"
-#include <iostream>
-#include <fstream>
 
 void MathSolver::Run(int argc, const char** argv) {
     if (argc > 2) {
@@ -63,6 +62,6 @@ void MathSolver::Solve(std::string_view source) {
         return;
     }
 
-    Engine engine(ast);
+    Engine engine(ast, m_arena);
     std::cout << FormatDouble(engine.Evaluate()) << "\n";
 }

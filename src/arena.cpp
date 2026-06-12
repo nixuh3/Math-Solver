@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "arena.h"
 
 Arena::Arena(size_t chunkSize) : m_size(chunkSize) {
