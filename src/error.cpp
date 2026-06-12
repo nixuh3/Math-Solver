@@ -11,6 +11,6 @@ void ErrorReporter::CompileError(int line, std::string_view where, std::string_v
     s_hadError = true;
 }
 
-bool ErrorReporter::HadError() { return false; }
+bool ErrorReporter::HadError() { return s_hadError; }
 
 void ErrorReporter::ClearError() { s_hadError = false; }

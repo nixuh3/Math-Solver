@@ -1,27 +1,30 @@
 #include "pch.h"
 #include "parser.h"
+#include "expression.h"
 #include "error.h"
 
 Parser::Parser(const std::vector<Token>& tokens, Arena& arena) : m_tokens(tokens), m_arena(arena) {}
 
-const Expr* Parser::Parse() {
+const Equation* Parser::Parse() {
     try {
-        return expression();
+        const Equation* eq = equation();
+
+        if (!isAtEnd()) {
+            throw error(peek(), "Unexpected tokens found after equation");
+        }
+
+        return eq;
     } catch (ParseError) {
         return nullptr;
     }
 }
 
-const Expr* Parser::expression() {
-    const Expr* expr = term();
+const Equation* Parser::equation() {
+    const Expr* left = term();
+    consume(EQUAL, "Expected '='");
+    const Expr* right = term();
 
-    while (match(EQUAL)) {
-        Token op = previous();
-        const Expr* right = term();
-        expr = m_arena.Alloc<Expr>(Binary{ expr, op, right });
-    }
-
-    return expr;
+    return m_arena.Alloc<Equation>(left, right);
 }
 
 const Expr* Parser::term() {
@@ -80,7 +83,7 @@ const Expr* Parser::primary() {
     }
 
     if (match(LEFT_PAREN)) {
-        const Expr* expr = expression();
+        const Expr* expr = term();
         consume(RIGHT_PAREN, "Expected ')' after expression");
         return m_arena.Alloc<Expr>(Grouping{ expr });
     }

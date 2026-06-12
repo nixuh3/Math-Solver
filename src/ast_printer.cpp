@@ -3,14 +3,17 @@
 #include "utils.h"
 #include "expression.h"
 
-std::string AstPrinter::Print(const Expr* expr) {
+std::string AstPrinter::Print(const Equation* equation) {
     m_ss.str("");
-    return printExpr(expr);
+
+    printExpr(equation->left);
+    m_ss << " = ";
+    printExpr(equation->right);
+    return m_ss.str();
 }
 
-std::string AstPrinter::printExpr(const Expr* expr) {
+void AstPrinter::printExpr(const Expr* expr) {
     std::visit([](auto&& node) { visit(node); }, *expr);
-    return m_ss.str();
 }
 
 void AstPrinter::visit(const Binary& expr) {

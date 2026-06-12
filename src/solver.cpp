@@ -56,7 +56,7 @@ void MathSolver::Solve(std::string_view source) {
     auto& tokens = scanner.Scan();
 
     Parser parser(tokens, m_arena);
-    auto ast = parser.Parse();
+    const Equation* ast = parser.Parse();
 
     if (ErrorReporter::HadError()) {
         return;

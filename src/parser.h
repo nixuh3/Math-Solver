@@ -1,18 +1,22 @@
 #pragma once
 
-#include "expression.h"
 #include "arena.h"
+#include "token.h"
 #include <vector>
+
+struct Expr;
+struct Equation;
 
 class Parser {
   public:
     Parser(const std::vector<Token>& tokens, Arena& arena);
-    const Expr* Parse();
+    const Equation* Parse();
 
   private:
     struct ParseError {};
 
-    const Expr* expression();
+    const Equation* equation();
+
     const Expr* term();
     const Expr* factor();
     const Expr* power();

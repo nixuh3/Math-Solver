@@ -31,3 +31,8 @@ struct Variable {
 struct Expr : std::variant<Binary, Grouping, Literal, Unary, Variable> {
     using variant::variant;
 };
+
+struct Equation {
+    const Expr* left;
+    const Expr* right;
+};

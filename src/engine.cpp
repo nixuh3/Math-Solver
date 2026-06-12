@@ -5,14 +5,23 @@
 
 #include "ast_printer.h"
 
-Engine::Engine(const Expr* expr, Arena& arena) : m_arena(arena), m_expr(expr) {}
+Engine::Engine(const Equation* equation, Arena& arena) : m_arena(arena), m_equation(equation) {}
 
 double Engine::Evaluate() {
-    std::cout << "Before: " << AstPrinter::Print(m_expr) << "\n";
-    m_expr = simplify(m_expr);
-    std::cout << "After: " << AstPrinter::Print(m_expr) << "\n";
+    std::cout << "Before: " << AstPrinter::Print(m_equation) << "\n";
 
-    return evaluateExpr(m_expr);
+    const Expr* simplifiedLeft = simplify(m_equation->left);
+    const Expr* simplifiedRight = simplify(m_equation->right);
+
+    const Equation* simplifiedEquation = m_equation;
+    if (simplifiedLeft != m_equation->left || simplifiedRight != m_equation->right) {
+        simplifiedEquation = m_arena.Alloc<Equation>(Equation{ simplifiedLeft, simplifiedRight });
+    }
+
+    std::cout << "After: " << AstPrinter::Print(simplifiedEquation) << "\n";
+
+    // TODO: solve the equation
+    return 0.0;
 }
 
 double Engine::evaluateExpr(const Expr* expr) {

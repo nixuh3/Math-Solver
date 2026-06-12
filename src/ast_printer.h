@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+struct Equation;
 struct Expr;
 struct Binary;
 struct Unary;
@@ -12,10 +13,10 @@ struct Variable;
 class AstPrinter {
   public:
     AstPrinter() = delete;
-    static std::string Print(const Expr* expr);
+    static std::string Print(const Equation* equation);
 
   private:
-    static std::string printExpr(const Expr* expr);
+    static void printExpr(const Expr* expr);
 
     static void visit(const Binary& expr);
     static void visit(const Unary& expr);

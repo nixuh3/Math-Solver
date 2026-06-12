@@ -1,5 +1,6 @@
 #pragma once
 
+struct Equation;
 struct Expr;
 struct Binary;
 struct Unary;
@@ -11,7 +12,7 @@ class Arena;
 
 class Engine {
   public:
-    explicit Engine(const Expr* expr, Arena& arena);
+    explicit Engine(const Equation* equation, Arena& arena);
     double Evaluate();
 
   private:
@@ -25,6 +26,6 @@ class Engine {
     double visit(const Variable& expr);
 
   private:
-    const Expr* m_expr;
+    const Equation* m_equation;
     Arena& m_arena;
 };
