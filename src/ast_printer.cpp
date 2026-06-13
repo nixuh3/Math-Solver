@@ -35,4 +35,4 @@ void AstPrinter::visit(const Grouping& expr) {
 
 void AstPrinter::visit(const Literal& expr) { m_ss << FormatDouble(expr.value); }
 
-void AstPrinter::visit(const Variable& expr) { m_ss << expr.name.lexeme; }
+void AstPrinter::visit(const Variable& expr) { m_ss << expr.name; }

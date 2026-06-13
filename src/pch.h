@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <array>
+#include <map>
 #include <string>
 #include <string_view>
 #include <variant>
@@ -15,6 +16,7 @@
 #include <new>
 #include <iomanip>
 
+#include <cassert>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>

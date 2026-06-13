@@ -2,7 +2,7 @@
 #include "engine.h"
 #include "expression.h"
 #include "arena.h"
-
+#include "polynomial.h"
 #include "ast_printer.h"
 
 Engine::Engine(const Equation* equation, Arena& arena) : m_arena(arena), m_equation(equation) {}
@@ -19,6 +19,11 @@ double Engine::Evaluate() {
     }
 
     std::cout << "After: " << AstPrinter::Print(simplifiedEquation) << "\n";
+
+    Polynomial leftPoly = Polynomial::FromExpr(simplifiedEquation->left);
+    Polynomial rightPoly = Polynomial::FromExpr(simplifiedEquation->right);
+    leftPoly.Print();
+    rightPoly.Print();
 
     // TODO: solve the equation
     return 0.0;

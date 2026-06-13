@@ -79,7 +79,7 @@ const Expr* Parser::primary() {
     }
 
     if (match(IDENTIFIER)) {
-        return m_arena.Alloc<Expr>(Variable{ previous() });
+        return m_arena.Alloc<Expr>(Variable{ "x" });
     }
 
     if (match(LEFT_PAREN)) {

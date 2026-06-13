@@ -25,7 +25,7 @@ struct Literal {
 };
 
 struct Variable {
-    const Token name;
+    std::string_view name;
 };
 
 struct Expr : std::variant<Binary, Grouping, Literal, Unary, Variable> {
