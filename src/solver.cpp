@@ -63,5 +63,5 @@ void MathSolver::Solve(std::string_view source) {
     }
 
     Engine engine(ast, m_arena);
-    std::cout << FormatDouble(engine.Evaluate()) << "\n";
+    std::cout << engine.Evaluate() << "\n";
 }

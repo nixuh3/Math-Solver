@@ -1,5 +1,7 @@
 #pragma once
 
+#include "rational.h"
+
 struct Equation;
 struct Expr;
 struct Binary;
@@ -13,17 +15,17 @@ class Arena;
 class Engine {
   public:
     explicit Engine(const Equation* equation, Arena& arena);
-    double Evaluate();
+    Rational Evaluate();
 
   private:
-    double evaluateExpr(const Expr* expr);
+    Rational evaluateExpr(const Expr* expr);
     const Expr* simplify(const Expr* expr);
 
-    double visit(const Binary& expr);
-    double visit(const Unary& expr);
-    double visit(const Grouping& expr);
-    double visit(const Literal& expr);
-    double visit(const Variable& expr);
+    Rational visit(const Binary& expr);
+    Rational visit(const Unary& expr);
+    Rational visit(const Grouping& expr);
+    Rational visit(const Literal& expr);
+    Rational visit(const Variable& expr);
 
   private:
     const Equation* m_equation;

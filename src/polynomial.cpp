@@ -3,9 +3,11 @@
 #include "expression.h"
 #include "utils.h"
 
-Polynomial::Polynomial(double constant) { m_coefficients[0] = constant; }
+Polynomial::Polynomial(Rational constant) { m_coefficients[0] = constant; }
 
-Polynomial::Polynomial(int exponent, double coefficient) { m_coefficients[exponent] = coefficient; }
+Polynomial::Polynomial(int exponent, Rational coefficient) {
+    m_coefficients[exponent] = coefficient;
+}
 
 Polynomial Polynomial::FromExpr(const Expr* expr) {
     return std::visit(
@@ -44,21 +46,49 @@ Polynomial Polynomial::FromExpr(const Expr* expr) {
 }
 
 void Polynomial::Print() const {
+    if (m_coefficients.empty()) {
+        std::cout << "0";
+        return;
+    }
+
+    bool isFirst = true;
+
     for (auto it = m_coefficients.rbegin(); it != m_coefficients.rend(); ++it) {
-        if (it->first > 0) {
-            std::cout << " + " << (it->second == 1.0 ? FormatDouble(it->second) : "") << "x^"
-                      << it->first;
+        int exponent = it->first;
+        Rational coeff = it->second;
+
+        if (isFirst) {
+            if (coeff < 0) {
+                std::cout << "-";
+                coeff = -coeff;
+            }
+            isFirst = false;
         } else {
-            std::cout << " + " << it->second;
+            if (coeff < 0) {
+                std::cout << " - ";
+                coeff = -coeff;
+            } else {
+                std::cout << " + ";
+            }
+        }
+
+        if (exponent == 0 || !(coeff == 1)) {
+            std::cout << coeff;
+        }
+
+        if (exponent > 0) {
+            std::cout << "x";
+            if (exponent > 1) {
+                std::cout << "^" << exponent;
+            }
         }
     }
-    std::cout << "\n";
 }
 
 Polynomial Polynomial::operator-() const {
     Polynomial result;
     for (const auto& [key, value] : m_coefficients) {
-        result[key] = -value;
+        result.m_coefficients[key] = -value;
     }
     return result;
 }
@@ -66,7 +96,7 @@ Polynomial Polynomial::operator-() const {
 Polynomial Polynomial::operator+(const Polynomial& rhs) const {
     Polynomial result = *this;
     for (auto const& [key, value] : rhs.m_coefficients) {
-        result[key] += value;
+        result.m_coefficients[key] += value;
     }
     result.normalize();
     return result;
@@ -75,7 +105,7 @@ Polynomial Polynomial::operator+(const Polynomial& rhs) const {
 Polynomial Polynomial::operator-(const Polynomial& rhs) const {
     Polynomial result = *this;
     for (auto const& [key, value] : rhs.m_coefficients) {
-        result[key] -= value;
+        result.m_coefficients[key] -= value;
     }
     result.normalize();
     return result;
@@ -85,7 +115,7 @@ Polynomial Polynomial::operator*(const Polynomial& rhs) const {
     Polynomial result;
     for (const auto& [key, value] : m_coefficients) {
         for (const auto& [rKey, rValue] : rhs.m_coefficients) {
-            result[key + rKey] += value * rValue;
+            result.m_coefficients[key + rKey] += value * rValue;
         }
     }
     result.normalize();
@@ -94,11 +124,11 @@ Polynomial Polynomial::operator*(const Polynomial& rhs) const {
 
 Polynomial Polynomial::operator/(const Polynomial& rhs) const {
     assert(rhs.degree() == 0 && "Variable in denomator");
-    assert(rhs[0] != 0.0 && "Division by zero");
+    assert(rhs.m_coefficients.at(0) != 0 && "Division by zero");
 
     Polynomial result;
     for (const auto& [key, value] : m_coefficients) {
-        result[key] = value / rhs[0];
+        result.m_coefficients[key] = value / rhs.m_coefficients.at(0);
     }
     result.normalize();
     return result;
@@ -106,12 +136,12 @@ Polynomial Polynomial::operator/(const Polynomial& rhs) const {
 
 Polynomial Polynomial::operator^(const Polynomial& rhs) const {
     assert(rhs.degree() == 0 && "Variable in exponent");
-    assert(rhs[0] >= 0 && "Negative exponenet");
-    assert(std::floor(rhs[0]) == rhs[0] && "Decimal exponenet");
+    assert(rhs.m_coefficients.at(0) >= 0 && "Negative exponenet");
+    assert(rhs.m_coefficients.at(0).IsInteger() && "Decimal exponenet");
 
     Polynomial base = *this;
-    int exp = static_cast<int>(rhs[0]);
-    Polynomial result(1.0);
+    int exp = static_cast<int>(rhs.m_coefficients.at(0).GetValue());
+    Polynomial result(1);
 
     while (exp > 0) {
         if (exp & 1) {
@@ -128,7 +158,7 @@ Polynomial Polynomial::operator^(const Polynomial& rhs) const {
 
 void Polynomial::normalize() {
     for (auto it = m_coefficients.begin(); it != m_coefficients.end();) {
-        if (std::abs(it->second) < 1e-12) {
+        if (it->second == 0) {
             it = m_coefficients.erase(it);
         } else {
             ++it;

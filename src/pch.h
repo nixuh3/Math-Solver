@@ -15,6 +15,8 @@
 #include <memory>
 #include <new>
 #include <iomanip>
+#include <numeric>
+#include <utility>
 
 #include <cassert>
 #include <cmath>

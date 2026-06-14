@@ -1,6 +1,7 @@
 #pragma once
 
 #include "token.h"
+#include "rational.h"
 #include <variant>
 
 struct Expr;
@@ -21,7 +22,7 @@ struct Grouping {
 };
 
 struct Literal {
-    double value;
+    Rational value;
 };
 
 struct Variable {

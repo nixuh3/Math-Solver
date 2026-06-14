@@ -57,7 +57,7 @@ void Scanner::scanNumber() {
     }
 
     std::string s(m_source.begin() + m_start, m_source.begin() + m_current);
-    addToken(NUMBER, std::stod(s));
+    addToken(NUMBER, Rational(std::stod(s)));
 }
 
 void Scanner::scanIdentifier() {
@@ -71,7 +71,7 @@ void Scanner::scanIdentifier() {
 
 void Scanner::addToken(TokenType type) { addToken(type, {}); }
 
-void Scanner::addToken(TokenType type, double literal) {
+void Scanner::addToken(TokenType type, Rational literal) {
     std::string_view text(&m_source[m_start], m_current - m_start);
     m_tokens.emplace_back(type, text, literal, m_line);
 }

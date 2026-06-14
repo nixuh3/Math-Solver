@@ -16,6 +16,7 @@ set(SOURCES
     src/utils.cpp
     src/ast_printer.cpp
     src/polynomial.cpp
+    src/rational.cpp
 )
 
 add_executable(math_solver ${SOURCES})

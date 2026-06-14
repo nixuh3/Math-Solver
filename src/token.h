@@ -1,5 +1,6 @@
 #pragma once
 
+#include "rational.h"
 #include <string>
 
 enum TokenType {
@@ -31,11 +32,11 @@ constexpr std::string OperatorToStr(TokenType type) {
 }
 
 struct Token {
-    Token(TokenType type, std::string_view lexeme, double value, int line)
+    Token(TokenType type, std::string_view lexeme, Rational value, int line)
         : type(type), lexeme(lexeme), literal(value), line(line) {}
 
     const TokenType type;
     const std::string lexeme;
-    const double literal;
+    const Rational literal;
     const int line;
 };
