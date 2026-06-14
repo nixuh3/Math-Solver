@@ -14,8 +14,15 @@ class Arena;
 
 class Engine {
   public:
+    struct Roots {
+        std::vector<Rational> roots;
+
+        bool isInfinite = false;
+        bool isNone = false;
+    };
+
     explicit Engine(const Equation* equation, Arena& arena);
-    Rational Evaluate();
+    Roots Evaluate();
 
   private:
     Rational evaluateExpr(const Expr* expr);

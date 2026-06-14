@@ -88,18 +88,6 @@ Rational& Rational::operator/=(const Rational& rhs) {
     return *this;
 }
 
-Rational& Rational::operator^=(const Rational& rhs) {
-    assert(rhs.IsInteger() && "Fractional exponent");
-    if (rhs.m_num >= 0) {
-        m_num = std::pow(m_num, rhs.m_num);
-        m_den = std::pow(m_den, rhs.m_num);
-    } else {
-        m_num = std::pow(m_num, -rhs.m_num);
-        m_den = std::pow(m_den, -rhs.m_num);
-    }
-    return *this;
-}
-
 Rational operator+(Rational lhs, const Rational& rhs) {
     lhs += rhs;
     return lhs;
@@ -120,9 +108,19 @@ Rational operator/(Rational lhs, const Rational& rhs) {
     return lhs;
 }
 
-Rational operator^(Rational lhs, const Rational& rhs) {
-    lhs ^= rhs;
-    return lhs;
+Rational Rational::Pow(const Rational& base, const Rational& exp) {
+    assert(exp.IsInteger() && "Fractional exponent");
+
+    Rational result;
+    if (exp.m_num >= 0) {
+        result.m_num = std::pow(base.m_num, exp.m_num);
+        result.m_den = std::pow(base.m_den, exp.m_num);
+    } else {
+        result.m_num = std::pow(base.m_den, -exp.m_num);
+        result.m_den = std::pow(base.m_num, -exp.m_num);
+    }
+
+    return result;
 }
 
 bool Rational::operator==(const Rational& rhs) const {

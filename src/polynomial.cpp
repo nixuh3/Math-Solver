@@ -29,7 +29,7 @@ Polynomial Polynomial::FromExpr(const Expr* expr) {
                     case MINUS: return left - right;
                     case STAR: return left * right;
                     case SLASH: return left / right;
-                    case CARET: return left ^ right;
+                    case CARET: return Pow(left, right);
                     default: assert(false && "Unsupported binary operator");
                 }
             } else if constexpr (std::is_same_v<T, Unary>) {
@@ -45,44 +45,61 @@ Polynomial Polynomial::FromExpr(const Expr* expr) {
         *expr);
 }
 
-void Polynomial::Print() const {
+int Polynomial::Degree() const {
     if (m_coefficients.empty()) {
-        std::cout << "0";
-        return;
+        return -1;
+    }
+    return m_coefficients.rbegin()->first;
+}
+
+Rational Polynomial::GetCoeff(int degree) const {
+    auto it = m_coefficients.find(degree);
+    if (it != m_coefficients.end()) {
+        return it->second;
+    }
+    return {};
+}
+
+std::ostream& operator<<(std::ostream& os, const Polynomial& p) {
+    if (p.m_coefficients.empty()) {
+        os << "0";
+        return os;
     }
 
     bool isFirst = true;
 
-    for (auto it = m_coefficients.rbegin(); it != m_coefficients.rend(); ++it) {
+    for (auto it = p.m_coefficients.rbegin(); it != p.m_coefficients.rend(); ++it) {
         int exponent = it->first;
         Rational coeff = it->second;
 
         if (isFirst) {
             if (coeff < 0) {
-                std::cout << "-";
+                os << "-";
                 coeff = -coeff;
             }
             isFirst = false;
         } else {
             if (coeff < 0) {
-                std::cout << " - ";
+                os << " - ";
                 coeff = -coeff;
             } else {
-                std::cout << " + ";
+                os << " + ";
             }
         }
 
         if (exponent == 0 || !(coeff == 1)) {
-            std::cout << coeff;
+            os << coeff;
         }
 
         if (exponent > 0) {
-            std::cout << "x";
+            os << "x";
             if (exponent > 1) {
-                std::cout << "^" << exponent;
+                os << "^" << exponent;
             }
         }
     }
+
+    return os;
 }
 
 Polynomial Polynomial::operator-() const {
@@ -123,7 +140,7 @@ Polynomial Polynomial::operator*(const Polynomial& rhs) const {
 }
 
 Polynomial Polynomial::operator/(const Polynomial& rhs) const {
-    assert(rhs.degree() == 0 && "Variable in denomator");
+    assert(rhs.Degree() == 0 && "Variable in denomator");
     assert(rhs.m_coefficients.at(0) != 0 && "Division by zero");
 
     Polynomial result;
@@ -134,13 +151,12 @@ Polynomial Polynomial::operator/(const Polynomial& rhs) const {
     return result;
 }
 
-Polynomial Polynomial::operator^(const Polynomial& rhs) const {
-    assert(rhs.degree() == 0 && "Variable in exponent");
-    assert(rhs.m_coefficients.at(0) >= 0 && "Negative exponenet");
-    assert(rhs.m_coefficients.at(0).IsInteger() && "Decimal exponenet");
+Polynomial Polynomial::Pow(Polynomial base, const Polynomial& exponent) {
+    assert(exponent.Degree() == 0 && "Variable in exponent");
+    assert(exponent.m_coefficients.at(0) >= 0 && "Negative exponenet");
+    assert(exponent.m_coefficients.at(0).IsInteger() && "Decimal exponenet");
 
-    Polynomial base = *this;
-    int exp = static_cast<int>(rhs.m_coefficients.at(0).GetValue());
+    int exp = static_cast<int>(exponent.m_coefficients.at(0).GetValue());
     Polynomial result(1);
 
     while (exp > 0) {
@@ -164,11 +180,4 @@ void Polynomial::normalize() {
             ++it;
         }
     }
-}
-
-int Polynomial::degree() const {
-    if (m_coefficients.empty()) {
-        return -1;
-    }
-    return m_coefficients.rbegin()->first;
 }

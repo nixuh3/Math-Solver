@@ -13,18 +13,21 @@ class Polynomial {
     Polynomial(int exponent, Rational coefficient);
 
     static Polynomial FromExpr(const Expr* expr);
-    void Print() const;
 
-  private:
+    int Degree() const;
+    Rational GetCoeff(int degree) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Polynomial& p);
+
     Polynomial operator-() const;
     Polynomial operator+(const Polynomial& rhs) const;
     Polynomial operator-(const Polynomial& rhs) const;
     Polynomial operator*(const Polynomial& rhs) const;
     Polynomial operator/(const Polynomial& rhs) const;
-    Polynomial operator^(const Polynomial& rhs) const;
+    static Polynomial Pow(Polynomial base, const Polynomial& exponent);
 
+  private:
     void normalize();
-    int degree() const;
 
     std::map<int, Rational> m_coefficients;
 };

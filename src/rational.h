@@ -17,13 +17,12 @@ class Rational {
     Rational& operator-=(const Rational& rhs);
     Rational& operator*=(const Rational& rhs);
     Rational& operator/=(const Rational& rhs);
-    Rational& operator^=(const Rational& rhs);
 
     friend Rational operator+(Rational lhs, const Rational& rhs);
     friend Rational operator-(Rational lhs, const Rational& rhs);
     friend Rational operator*(Rational lhs, const Rational& rhs);
     friend Rational operator/(Rational lhs, const Rational& rhs);
-    friend Rational operator^(Rational lhs, const Rational& rhs);
+    static Rational Pow(const Rational& base, const Rational& exp);
 
     bool operator==(const Rational& rhs) const;
     bool operator!=(const Rational& rhs) const;

@@ -63,5 +63,17 @@ void MathSolver::Solve(std::string_view source) {
     }
 
     Engine engine(ast, m_arena);
-    std::cout << engine.Evaluate() << "\n";
+    Engine::Roots roots = engine.Evaluate();
+
+    if (roots.isInfinite) {
+        std::cout << "Infinite roots\n";
+    } else if (roots.isNone) {
+        std::cout << "No roots\n";
+    } else {
+        std::cout << "Roots: { ";
+        for (int i = 0; const auto& root : roots.roots) {
+            std::cout << root << (++i == roots.roots.size() ? " " : ", ");
+        }
+        std::cout << "}\n";
+    }
 }

@@ -7,28 +7,63 @@
 
 Engine::Engine(const Equation* equation, Arena& arena) : m_arena(arena), m_equation(equation) {}
 
-Rational Engine::Evaluate() {
-    std::cout << "Before: " << AstPrinter::Print(m_equation) << "\n";
+Engine::Roots Engine::Evaluate() {
+    std::cout << "Start: " << AstPrinter::Print(m_equation) << "\n";
 
     const Expr* simplifiedLeft = simplify(m_equation->left);
     const Expr* simplifiedRight = simplify(m_equation->right);
 
     const Equation* simplifiedEquation = m_equation;
     if (simplifiedLeft != m_equation->left || simplifiedRight != m_equation->right) {
-        simplifiedEquation = m_arena.Alloc<Equation>(Equation{ simplifiedLeft, simplifiedRight });
+        simplifiedEquation = m_arena.Alloc<Equation>(simplifiedLeft, simplifiedRight);
     }
 
-    std::cout << "After: " << AstPrinter::Print(simplifiedEquation) << "\n";
+    std::cout << "Simplified: " << AstPrinter::Print(simplifiedEquation) << "\n";
 
     Polynomial leftPoly = Polynomial::FromExpr(simplifiedEquation->left);
     Polynomial rightPoly = Polynomial::FromExpr(simplifiedEquation->right);
-    leftPoly.Print();
-    std::cout << " = ";
-    rightPoly.Print();
-    std::cout << "\n";
+    std::cout << "Polynomial form: " << leftPoly << " = " << rightPoly << "\n";
 
-    // TODO: solve the equation
-    return 0;
+    Polynomial lhs = leftPoly - rightPoly;
+    std::cout << "Bring terms to the lhs: " << lhs << " = 0\n";
+
+    Roots roots;
+    switch (lhs.Degree()) {
+        case 0:
+            std::cout << "No variables\n";
+            if (lhs.GetCoeff(0) == 0) {
+                roots.isInfinite = true;
+            } else {
+                roots.isNone = true;
+            }
+            break;
+        case 1:
+            std::cout << "Linear\n";
+            // ax + b = 0 -> x = -b/a
+            roots.roots.emplace_back(-lhs.GetCoeff(0) / lhs.GetCoeff(1));
+            break;
+        case 2: {
+            std::cout << "Quadratic\n";
+
+            Rational c = lhs.GetCoeff(0);
+            Rational b = lhs.GetCoeff(1);
+            Rational a = lhs.GetCoeff(2);
+
+            Rational delta = Rational::Pow(b, 2) - 4 * a * c;
+
+            if (delta < 0) {
+                roots.isNone = true;
+            } else if (delta == 0) {
+                roots.roots.emplace_back(-b / (2 * a));
+            } else {
+                // TODO
+            }
+            break;
+        }
+        default: std::cout << "Higher degree equations not supported\n"; break;
+    }
+
+    return roots;
 }
 
 Rational Engine::evaluateExpr(const Expr* expr) {
@@ -88,7 +123,7 @@ Rational Engine::visit(const Binary& expr) {
         case MINUS: return left - right;
         case STAR: return left * right;
         case SLASH: return left / right;
-        case CARET: return left ^ right;
+        case CARET: return Rational::Pow(left, right);
         default: break;
     }
 
